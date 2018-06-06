@@ -20,6 +20,8 @@ class MyMesh
 
 	ShaderManager* m_pShaderMngr = nullptr;	//Shader Manager
 
+	const double TWOPI = 2.0 * 3.1415926535897932384626433832795;
+
 public:
 	/*
 	USAGE: Initialize the object's fields
