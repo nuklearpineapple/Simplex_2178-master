@@ -115,7 +115,7 @@ void AppClass::ProcessKeyboard(sf::Event a_event)
 		m_v3Color = glm::vec3(0.0f, 0.0f, 1.0f);
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num0))
 		m_v3Color = glm::vec3(-1.0f, -1.0f, -1.0f);
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::C)){
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::C)){ // bool
 		if (m_bCompliment) { m_bCompliment = 0; }
 		else { m_bCompliment = 1; }
 	}
