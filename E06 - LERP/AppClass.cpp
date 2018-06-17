@@ -59,7 +59,40 @@ void Application::Display(void)
 
 
 	//your code goes here
-	v3CurrentPos = vector3(0.0f, 0.0f, 0.0f);
+
+	static int positionCount = 0; // retains current point in array (starting point)
+
+	float endTime = 2.0f; // amount of time spent traveling
+
+	int startPoint = positionCount; // current point in array (starting point)
+	int endPoint;
+
+	if (positionCount < m_stopsList.size() - 1)
+		endPoint = positionCount + 1; // the following point in array (goal | end point)
+	else
+		endPoint = 0;
+
+	vector3 startCoord = m_stopsList[startPoint]; // starting coordinates for lerp
+	vector3 endCoord = m_stopsList[endPoint]; // goal and/or ending coordinates for lerp
+
+	static float currentX = m_stopsList[0].x;
+
+	vector3 time = vector3(fTimer / endTime, fTimer / endTime, fTimer / endTime); // time percent
+
+	// Linear Interpolation Formula (start + percent*(end - start));
+	v3CurrentPos = vector3(startCoord + time * (endCoord - startCoord)); // move
+
+	if (fTimer >= 2) {
+		if (positionCount < m_stopsList.size())
+			positionCount++;
+
+		fTimer = 0;
+	}
+
+	if (positionCount >= m_stopsList.size()) {
+		positionCount = 0;
+	}
+
 	//-------------------
 	
 
