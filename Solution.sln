@@ -107,6 +107,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "E11 - EntityManager", "E11 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "C05_Shaders", "E03_Shaders\C05_Shaders.vcxproj", "{DFE09A1D-F059-4D9D-AA94-0E4A018EE85D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "E05_Transformations", "E05_Transformations\E05_Transformations.vcxproj", "{3A7F9F10-2F8D-49F2-8603-6F2A6D9117FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -283,6 +285,10 @@ Global
 		{DFE09A1D-F059-4D9D-AA94-0E4A018EE85D}.Debug|x86.Build.0 = Debug|Win32
 		{DFE09A1D-F059-4D9D-AA94-0E4A018EE85D}.Release|x86.ActiveCfg = Release|Win32
 		{DFE09A1D-F059-4D9D-AA94-0E4A018EE85D}.Release|x86.Build.0 = Release|Win32
+		{3A7F9F10-2F8D-49F2-8603-6F2A6D9117FB}.Debug|x86.ActiveCfg = Debug|Win32
+		{3A7F9F10-2F8D-49F2-8603-6F2A6D9117FB}.Debug|x86.Build.0 = Debug|Win32
+		{3A7F9F10-2F8D-49F2-8603-6F2A6D9117FB}.Release|x86.ActiveCfg = Release|Win32
+		{3A7F9F10-2F8D-49F2-8603-6F2A6D9117FB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -330,6 +336,7 @@ Global
 		{9557AEB2-A186-4645-B8D0-678D133C2EFA} = {78C06654-E155-40A8-97F7-7BA1E50977C5}
 		{870B329D-6DED-48D2-8E86-0893E3BB8DAB} = {78C06654-E155-40A8-97F7-7BA1E50977C5}
 		{DFE09A1D-F059-4D9D-AA94-0E4A018EE85D} = {78C06654-E155-40A8-97F7-7BA1E50977C5}
+		{3A7F9F10-2F8D-49F2-8603-6F2A6D9117FB} = {78C06654-E155-40A8-97F7-7BA1E50977C5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A36545A6-DAAA-4856-BDB7-57C29F88BC6B}
