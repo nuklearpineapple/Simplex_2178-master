@@ -305,7 +305,7 @@ void MyMesh::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivisions,
 
 		coorArray.push_back(currentPoint); // push back x y z coord into array
 
-										   // ADD TRIANGLES TO DRAW SHAPE
+		// ADD TRIANGLES TO DRAW SHAPE
 		if (i != 0) {
 			// Base
 			AddTri(coorArray[i], coorArray[i - 1], coneCenter);
@@ -369,7 +369,7 @@ void MyMesh::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubdivisi
 
 		coorArray.push_back(currentPoint); // push back x y z coord into array
 
-										   // DRAW SHAPE
+		// DRAW SHAPE
 		if (i != 0) {
 
 			// Bottom Base
@@ -454,7 +454,7 @@ void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fH
 
 		coorArray.push_back(currentPoint); // push back x y z coord into array
 
-										   // DRAW SHAPE
+		// DRAW SHAPE
 		if (i != 0) {
 
 			// Bottom Base
@@ -469,7 +469,7 @@ void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fH
 				vector3(coorArray[i].x, coorArray[i].y - tubeRadius, 0.0f), // top left
 				vector3(coorArray[i - 1].x, coorArray[i - 1].y - tubeRadius, 0.0f)); // top (i) right (a_fHeight)
 
-																					 // Top Base
+			// Top Base
 			AddQuad(
 				vector3(coorArray[i - 1].x, coorArray[i - 1].y, a_fHeight), // bottom (i-1) left (0)
 				vector3(coorArray[i].x, coorArray[i].y, a_fHeight), // bottom right
@@ -481,7 +481,7 @@ void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fH
 				vector3(coorArray[i].x, coorArray[i].y - tubeRadius, a_fHeight), // top left
 				vector3(coorArray[i - 1].x, coorArray[i - 1].y - tubeRadius, a_fHeight)); // top (i) right (a_fHeight)
 
-																						  // Outer Wall
+			// Outer Wall
 			AddQuad(
 				vector3(coorArray[i - 1].x, coorArray[i - 1].y, 0.0f), // bottom (i-1) left (0)
 				vector3(coorArray[i].x, coorArray[i].y, 0.0f), // bottom right
@@ -494,7 +494,7 @@ void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fH
 				vector3(coorArray[i].x, coorArray[i].y, a_fHeight), // top left
 				vector3(coorArray[i - 1].x, coorArray[i - 1].y, a_fHeight)); // top (i) right (a_fHeight)
 
-																			 // Inner Wall
+			// Inner Wall
 			AddQuad(
 				vector3(coorArray[i].x, coorArray[i].y - tubeRadius, 0.0f), // bottom (i-1) left (0)
 				vector3(coorArray[i - 1].x, coorArray[i - 1].y - tubeRadius, 0.0f), // bottom right
@@ -571,7 +571,7 @@ void MyMesh::GenerateTorus(float a_fOuterRadius, float a_fInnerRadius, int a_nSu
 
 		coorArray.push_back(currentPoint); // push back x y z coord into array
 
-										   // DRAW SHAPE
+		// DRAW SHAPE
 		if (i != 0) {
 
 			// Bottom Base
@@ -586,7 +586,7 @@ void MyMesh::GenerateTorus(float a_fOuterRadius, float a_fInnerRadius, int a_nSu
 				vector3(coorArray[i].x, coorArray[i].y - tubeRadius, 0.0f), // top left
 				vector3(coorArray[i - 1].x, coorArray[i - 1].y - tubeRadius, 0.0f)); // top (i) right (a_fHeight)
 
-																					 // Top Base
+			// Top Base
 			AddQuad(
 				vector3(coorArray[i - 1].x, coorArray[i - 1].y, a_fInnerRadius), // bottom (i-1) left (0)
 				vector3(coorArray[i].x, coorArray[i].y, a_fInnerRadius), // bottom right
@@ -598,7 +598,7 @@ void MyMesh::GenerateTorus(float a_fOuterRadius, float a_fInnerRadius, int a_nSu
 				vector3(coorArray[i].x, coorArray[i].y - tubeRadius, a_fInnerRadius), // top left
 				vector3(coorArray[i - 1].x, coorArray[i - 1].y - tubeRadius, a_fInnerRadius)); // top (i) right (a_fHeight)
 
-																							   // Outer Wall
+			// Outer Wall
 			AddQuad(
 				vector3(coorArray[i - 1].x, coorArray[i - 1].y, 0.0f), // bottom (i-1) left (0)
 				vector3(coorArray[i].x, coorArray[i].y, 0.0f), // bottom right
@@ -611,7 +611,7 @@ void MyMesh::GenerateTorus(float a_fOuterRadius, float a_fInnerRadius, int a_nSu
 				vector3(coorArray[i].x, coorArray[i].y, a_fInnerRadius), // top left
 				vector3(coorArray[i - 1].x, coorArray[i - 1].y, a_fInnerRadius)); // top (i) right (a_fHeight)
 
-																				  // Inner Wall
+			// Inner Wall
 			AddQuad(
 				vector3(coorArray[i].x, coorArray[i].y - tubeRadius, 0.0f), // bottom (i-1) left (0)
 				vector3(coorArray[i - 1].x, coorArray[i - 1].y - tubeRadius, 0.0f), // bottom right
@@ -683,7 +683,7 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 
 		coorArray.push_back(currentPoint); // push back x y z coord into array
 
-										   // DRAW SHAPE
+		// DRAW SHAPE
 		if (i != 0) {
 
 			// Bottom Base
