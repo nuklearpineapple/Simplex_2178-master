@@ -45,6 +45,9 @@ private:
 	ControllerInput* m_pController[8]; //Controller
 	uint m_uActCont = 0; //Active Controller of the Application
 
+	std::vector<std::vector<vector3>> stops_list;
+	const double TWOPI = 2.0 * 3.1415926535897932384626433832795;
+
 public:
 #pragma region Constructor / Run / Destructor
 	/*
