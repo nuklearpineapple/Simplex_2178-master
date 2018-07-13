@@ -72,6 +72,7 @@ void Application::ProcessKeyPressed(sf::Event a_event)
 	default: break;
 	case sf::Keyboard::Space:
 		break;
+	break;
 	}
 	//gui
 	gui.io.KeysDown[a_event.key.code] = true;
@@ -129,6 +130,7 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 	gui.io.KeyCtrl = a_event.key.control;
 	gui.io.KeyShift = a_event.key.shift;
 }
+
 //Joystick
 void Application::ProcessJoystickConnected(uint nController)
 {
@@ -327,13 +329,14 @@ void Application::ArcBall(float a_fSensitivity)
 }
 void Application::CameraRotation(float a_fSpeed)
 {
+	// exit if right mouse is not clicked
 	if (m_bFPC == false)
 		return;
 
-	UINT	MouseX, MouseY;		// Coordinates for the mouse
+	UINT	MouseX = 1, MouseY = 1;		// Coordinates for the mouse
 	UINT	CenterX, CenterY;	// Coordinates for the center of the screen.
 
-								//Initialize the position of the pointer to the middle of the screen
+	//Initialize the position of the pointer to the middle of the screen
 	CenterX = m_pSystem->GetWindowX() + m_pSystem->GetWindowWidth() / 2;
 	CenterY = m_pSystem->GetWindowY() + m_pSystem->GetWindowHeight() / 2;
 
@@ -368,8 +371,15 @@ void Application::CameraRotation(float a_fSpeed)
 		fDeltaMouse = static_cast<float>(MouseY - CenterY);
 		fAngleX += fDeltaMouse * a_fSpeed;
 	}
+
+	// adjust camera rotation if right mouse clicked
+	m_pCamera->SetTarget(vector3(m_pCamera->GetTarget().x - fAngleY, 
+		m_pCamera->GetTarget().y - fAngleX, 0.0f));
+	m_pCamera->SetUp(vector3(0.0f, 1.0f, 0.0f));
+
 	//Change the Yaw and the Pitch of the camera
-	SetCursorPos(CenterX, CenterY);//Position the mouse in the center
+	SetCursorPos(CenterX, CenterY); //Position the mouse in the center
+
 }
 //Keyboard
 void Application::ProcessKeyboard(void)
@@ -379,12 +389,77 @@ void Application::ProcessKeyboard(void)
 	for discreet on/off use ProcessKeyboardPressed/Released
 	*/
 #pragma region Camera Position
-	float fSpeed = 0.1f;
+	float fSpeed = 0.4f;
 	float fMultiplier = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ||
 		sf::Keyboard::isKeyPressed(sf::Keyboard::RShift);
 
+	// position of the camera
+	vector3 v3Pos;
+	vector3 v3Target;
+	vector3 v3Direction;
+	vector3 v3Right;
+	vector3 v3Up;
+
+// WASD keys | Set PosTarUp dynamic
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+	{
+		// fetch current Position Target and Up
+		v3Pos = m_pCamera->GetPosition();
+		v3Target = m_pCamera->GetTarget();
+		v3Up = m_pCamera->GetUp();
+
+		v3Direction = v3Target - v3Pos;
+		v3Direction = glm::normalize(v3Direction);
+
+		m_pCamera->SetPosition(v3Pos + v3Direction);
+		m_pCamera->SetTarget(v3Target + v3Direction);
+		m_pCamera->SetUp(m_pCamera->GetUp() + v3Direction);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	{
+		// fetch current Position Target and Up
+		v3Pos = m_pCamera->GetPosition();
+		v3Target = m_pCamera->GetTarget();
+		v3Up = m_pCamera->GetUp();
+
+		v3Direction = v3Target - v3Pos;
+		v3Direction = glm::normalize(v3Direction);
+		v3Right = glm::normalize(glm::cross(v3Up, v3Direction));
+
+		m_pCamera->SetPosition(v3Pos + v3Right);
+		m_pCamera->SetTarget(m_pCamera->GetTarget() + v3Right);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+	{
+		// fetch current Position Target and Up
+		v3Pos = m_pCamera->GetPosition();
+		v3Target = m_pCamera->GetTarget();
+		v3Up = m_pCamera->GetUp();
+
+		v3Direction = v3Target - v3Pos;
+		v3Direction = glm::normalize(v3Direction);
+
+		m_pCamera->SetPosition(v3Pos - v3Direction);
+		m_pCamera->SetTarget(v3Target - v3Direction);
+		m_pCamera->SetUp(m_pCamera->GetUp() - v3Direction);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	{
+		// fetch current Position Target and Up
+		v3Pos = m_pCamera->GetPosition();
+		v3Target = m_pCamera->GetTarget();
+		v3Up = m_pCamera->GetUp();
+
+		v3Direction = v3Target - v3Pos;
+		v3Direction = glm::normalize(v3Direction);
+		v3Right = glm::normalize(glm::cross(v3Up, v3Direction));
+
+		m_pCamera->SetPosition(v3Pos - v3Right);
+		m_pCamera->SetTarget(m_pCamera->GetTarget() - v3Right);
+	}
+
 	if (fMultiplier)
-		fSpeed *= 5.0f;
+		fSpeed *= 6.0f;
 #pragma endregion
 }
 //Joystick
