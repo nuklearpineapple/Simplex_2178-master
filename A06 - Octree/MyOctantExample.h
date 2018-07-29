@@ -6,9 +6,12 @@ Date: 2017/07
 #define __MYOCTANTCLASS_H_
 
 #include "MyEntityManager.h"
+#include "MyMesh.h"
 
 namespace Simplex
 {
+
+class MyEntityManager; // forward declaration
 
 //System Class
 class MyOctant
@@ -37,6 +40,8 @@ class MyOctant
 
 	MyOctant* m_pRoot = nullptr;//Root octant
 	std::vector<MyOctant*> m_lChild; //list of nodes that contain objects (this will be applied to root only)
+
+	MyMesh* mesh = nullptr;
 	
 public:
 	/*
@@ -82,17 +87,53 @@ public:
 	*/
 	void Swap(MyOctant& other);
 	/*
+	USAGE: Get this octant's min position
+	ARGUMENTS: ---
+	OUTPUT: size of octant
+	*/
+	vector3 GetMin(void);
+	/*
+	USAGE: Sets this octant's min position
+	ARGUMENTS: ---
+	OUTPUT: size of octant
+	*/
+	void SetMin(vector3 min);
+	/*
+	USAGE: Get this octant's max position
+	ARGUMENTS: ---
+	OUTPUT: size of octant
+	*/
+	vector3 GetMax(void);
+	/*
+	USAGE: Sets this octant's max position
+	ARGUMENTS: ---
+	OUTPUT: size of octant
+	*/
+	void SetMax(vector3 max);
+	/*
 	USAGE: Gets this octant's size
 	ARGUMENTS: ---
 	OUTPUT: size of octant
 	*/
 	float GetSize(void);
 	/*
-	USAGE: Gets the center of the octant in global scape
+	USAGE: Sets this octant's size
+	ARGUMENTS: ---
+	OUTPUT: size of octant
+	*/
+	void SetSize(float size);
+	/*
+	USAGE: Gets the center of the octant in global space
 	ARGUMENTS: ---
 	OUTPUT: Center of the octant in global space
 	*/
 	vector3 GetCenterGlobal(void);
+	/*
+	USAGE: Sets the center of the octant in global space
+	ARGUMENTS: ---
+	OUTPUT: Center of the octant in global space
+	*/
+	void SetCenterGlobal(vector3 center);
 	/*
 	USAGE: Gets the min corner of the octant in global space
 	ARGUMENTS: ---
@@ -120,14 +161,7 @@ public:
 	- vector3 a_v3Color = REYELLOW -> Color of the volume to display.
 	OUTPUT: ---
 	*/
-	void Display(uint a_nIndex, vector3 a_v3Color = C_YELLOW);
-	/*
-	USAGE: Displays the MyOctant volume in the color specified
-	ARGUMENTS:
-	- vector3 a_v3Color = REYELLOW -> Color of the volume to display.
-	OUTPUT: ---
-	*/
-	void Display(vector3 a_v3Color = C_YELLOW);
+	void Display();
 	/*
 	USAGE: Displays the non empty leafs in the octree
 	ARGUMENTS:
@@ -198,7 +232,40 @@ public:
 	OUTPUT: ---
 	*/
 	uint GetOctantCount(void);
-
+	/*
+	Check if octant contains an entity
+	*/
+	bool Contains(MyRigidBody* rigidbody);
+	/*
+	Check if has point
+	*/
+	bool HasPoint(vector3 point);
+	/*
+	Add the id of the entity to list
+	*/
+	void AddEntityID(uint uID);
+	/*
+	check if octant has entity accessed by the ID provided
+	*/
+	bool HasEntity(uint uID);
+	/*
+	Populate octant with entity based on unique ID
+	*/
+	void Populate(uint uID);
+	/*
+	*/
+	std::vector<uint> GetEntityList();
+	/*
+	*/
+	void SetEntityMngr(MyEntityManager* entityMngr);
+	/*
+	*/
+	MyOctant* GetOctant(MyOctant* octant);
+	/*
+	*/
+	MyOctant* GetOctantContainingEntity(MyRigidBody* rigidbody);
+	void Update(void);
+	
 private:
 	/*
 	USAGE: Deallocates member fields

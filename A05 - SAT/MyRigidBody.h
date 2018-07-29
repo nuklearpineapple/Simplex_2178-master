@@ -36,7 +36,17 @@ class MyRigidBody
 
 	matrix4 m_m4ToWorld = IDENTITY_M4; //Matrix that will take us from local to world coordinate
 
+	vector3 v3Corner[8]; // list of coordinates in system
+
+	float EPSILON = 0.00001; // arbitrary floating point for eliminating false SAT testing 
+
 	std::set<MyRigidBody*> m_CollidingRBSet; //set of rigid bodies this one is colliding with
+
+	struct OBB {
+		vector3 c; // center point
+		vector3 u[3]; // axes 
+		vector3 e; // half_width
+	};
 
 public:
 	/*

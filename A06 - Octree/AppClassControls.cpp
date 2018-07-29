@@ -113,15 +113,16 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 		break;
 	case sf::Keyboard::PageUp:
 		++m_uOctantID;
+		std::cout << "PAGE UP";
 		/*
-		if (m_uOctantID >= m_pRoot->GetOctantCount())
+		if (m_uOctantID >= m_pOctant->GetOctantCount())
 			m_uOctantID = - 1;
 		*/
 		break;
 	case sf::Keyboard::PageDown:
 		--m_uOctantID;
 		/*
-		if (m_uOctantID >= m_pRoot->GetOctantCount())
+		if (m_uOctantID >= m_pOctant->GetOctantCount())
 			m_uOctantID = - 1;
 		*/
 		break;
@@ -130,9 +131,18 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 		{
 			m_pEntityMngr->ClearDimensionSetAll();
 			++m_uOctantLevels;
+			std::vector<uint> eList = m_pOctant->GetEntityList();
+
+			m_pOctant->Subdivide();
+			
+			if (m_uOctantLevels > 0)
+				changeCube = true;
+			else
+				changeCube = false;
+			
 			/*
-			SafeDelete(m_pRoot);
-			m_pRoot = new MyOctant(m_uOctantLevels, 5);
+			SafeDelete(m_pOctant);
+			m_pOctant = new MyOctant(m_uOctantLevels, 5);
 			*/
 		}
 		break;
@@ -141,12 +151,61 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 		{
 			m_pEntityMngr->ClearDimensionSetAll();
 			--m_uOctantLevels;
+			
+			if (m_uOctantLevels > 0)
+				changeCube = true;
+			else
+				changeCube = false;
+
 			/*
-			SafeDelete(m_pRoot);
-			m_pRoot = new MyOctant(m_uOctantLevels, 5);
+			SafeDelete(m_pOctant);
+			m_pOctant = new MyOctant(m_uOctantLevels, 5);
 			*/
 		}
 		break;
+
+//octant (HOME, END) = (+, -)
+	case sf::Keyboard::Home:
+		if (m_uOctantLevels < 4)
+		{
+			m_pEntityMngr->ClearDimensionSetAll();
+			++m_uOctantLevels;
+			std::cout << " + SIGN ";
+			std::vector<uint> eList = m_pOctant->GetEntityList();
+			
+			m_pOctant->Subdivide();
+
+			if (m_uOctantLevels > 0)
+				changeCube = true;
+			else
+				changeCube = false;
+
+			/*
+			SafeDelete(m_pOctant);
+			m_pOctant = new MyOctant(m_uOctantLevels, 5);
+			*/
+		}
+		break;
+	case sf::Keyboard::End:
+		if (m_uOctantLevels > 0)
+		{
+			m_pEntityMngr->ClearDimensionSetAll();
+			--m_uOctantLevels;
+			std::cout << " - SIGN ";
+
+			if (m_uOctantLevels > 0)
+				changeCube = true;
+			else
+				changeCube = false;
+
+			/*
+			SafeDelete(m_pOctant);
+			m_pOctant = new MyOctant(m_uOctantLevels, 5);
+			*/
+		}
+		break;
+//octant (HOME, END) = (+, -)
+
 	case sf::Keyboard::LShift:
 	case sf::Keyboard::RShift:
 		m_bModifier = false;

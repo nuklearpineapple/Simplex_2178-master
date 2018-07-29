@@ -6,7 +6,7 @@ void MyRigidBody::Init(void)
 	m_pMeshMngr = MeshManager::GetInstance();
 	m_bVisibleBS = false;
 	m_bVisibleOBB = true;
-	m_bVisibleARBB = true;
+	m_bVisibleARBB = false;
 
 	m_fRadius = 0.0f;
 
@@ -25,31 +25,31 @@ void MyRigidBody::Init(void)
 
 	m_m4ToWorld = IDENTITY_M4;
 }
-void MyRigidBody::Swap(MyRigidBody& other)
+void MyRigidBody::Swap(MyRigidBody& a_pOther)
 {
-	std::swap(m_pMeshMngr, other.m_pMeshMngr);
-	std::swap(m_bVisibleBS, other.m_bVisibleBS);
-	std::swap(m_bVisibleOBB, other.m_bVisibleOBB);
-	std::swap(m_bVisibleARBB, other.m_bVisibleARBB);
+	std::swap(m_pMeshMngr, a_pOther.m_pMeshMngr);
+	std::swap(m_bVisibleBS, a_pOther.m_bVisibleBS);
+	std::swap(m_bVisibleOBB, a_pOther.m_bVisibleOBB);
+	std::swap(m_bVisibleARBB, a_pOther.m_bVisibleARBB);
 
-	std::swap(m_fRadius, other.m_fRadius);
+	std::swap(m_fRadius, a_pOther.m_fRadius);
 
-	std::swap(m_v3ColorColliding, other.m_v3ColorColliding);
-	std::swap(m_v3ColorNotColliding, other.m_v3ColorNotColliding);
+	std::swap(m_v3ColorColliding, a_pOther.m_v3ColorColliding);
+	std::swap(m_v3ColorNotColliding, a_pOther.m_v3ColorNotColliding);
 
-	std::swap(m_v3Center, other.m_v3Center);
-	std::swap(m_v3MinL, other.m_v3MinL);
-	std::swap(m_v3MaxL, other.m_v3MaxL);
+	std::swap(m_v3Center, a_pOther.m_v3Center);
+	std::swap(m_v3MinL, a_pOther.m_v3MinL);
+	std::swap(m_v3MaxL, a_pOther.m_v3MaxL);
 
-	std::swap(m_v3MinG, other.m_v3MinG);
-	std::swap(m_v3MaxG, other.m_v3MaxG);
+	std::swap(m_v3MinG, a_pOther.m_v3MinG);
+	std::swap(m_v3MaxG, a_pOther.m_v3MaxG);
 
-	std::swap(m_v3HalfWidth, other.m_v3HalfWidth);
-	std::swap(m_v3ARBBSize, other.m_v3ARBBSize);
+	std::swap(m_v3HalfWidth, a_pOther.m_v3HalfWidth);
+	std::swap(m_v3ARBBSize, a_pOther.m_v3ARBBSize);
 
-	std::swap(m_m4ToWorld, other.m_m4ToWorld);
+	std::swap(m_m4ToWorld, a_pOther.m_m4ToWorld);
 
-	std::swap(m_CollidingRBSet, other.m_CollidingRBSet);
+	std::swap(m_CollidingRBSet, a_pOther.m_CollidingRBSet);
 }
 void MyRigidBody::Release(void)
 {
@@ -71,7 +71,7 @@ void MyRigidBody::SetColorNotColliding(vector3 a_v3Color) { m_v3ColorNotCollidin
 vector3 MyRigidBody::GetCenterLocal(void) { return m_v3Center; }
 vector3 MyRigidBody::GetMinLocal(void) { return m_v3MinL; }
 vector3 MyRigidBody::GetMaxLocal(void) { return m_v3MaxL; }
-vector3 MyRigidBody::GetCenterGlobal(void){	return vector3(m_m4ToWorld * vector4(m_v3Center, 1.0f)); }
+vector3 MyRigidBody::GetCenterGlobal(void) { return vector3(m_m4ToWorld * vector4(m_v3Center, 1.0f)); }
 vector3 MyRigidBody::GetMinGlobal(void) { return m_v3MinG; }
 vector3 MyRigidBody::GetMaxGlobal(void) { return m_v3MaxG; }
 vector3 MyRigidBody::GetHalfWidth(void) { return m_v3HalfWidth; }
@@ -82,12 +82,42 @@ void MyRigidBody::SetModelMatrix(matrix4 a_m4ModelMatrix)
 	if (a_m4ModelMatrix == m_m4ToWorld)
 		return;
 
+	//Assign the model matrix
 	m_m4ToWorld = a_m4ModelMatrix;
-	
-	//your code goes here---------------------
-	m_v3MinG = m_v3MinL;
-	m_v3MaxG = m_v3MaxL;
-	//----------------------------------------
+
+	//Back square
+	v3Corner[0] = m_v3MinL;
+	v3Corner[1] = vector3(m_v3MaxL.x, m_v3MinL.y, m_v3MinL.z);
+	v3Corner[2] = vector3(m_v3MinL.x, m_v3MaxL.y, m_v3MinL.z);
+	v3Corner[3] = vector3(m_v3MaxL.x, m_v3MaxL.y, m_v3MinL.z);
+
+	//Front square
+	v3Corner[4] = vector3(m_v3MinL.x, m_v3MinL.y, m_v3MaxL.z);
+	v3Corner[5] = vector3(m_v3MaxL.x, m_v3MinL.y, m_v3MaxL.z);
+	v3Corner[6] = vector3(m_v3MinL.x, m_v3MaxL.y, m_v3MaxL.z);
+	v3Corner[7] = m_v3MaxL;
+
+	//Place them in world space
+	for (uint uIndex = 0; uIndex < 8; ++uIndex)
+	{
+		v3Corner[uIndex] = vector3(m_m4ToWorld * vector4(v3Corner[uIndex], 1.0f));
+	}
+
+	//Identify the max and min as the first corner
+	m_v3MaxG = m_v3MinG = v3Corner[0];
+
+	//get the new max and min for the global box
+	for (uint i = 1; i < 8; ++i)
+	{
+		if (m_v3MaxG.x < v3Corner[i].x) m_v3MaxG.x = v3Corner[i].x;
+		else if (m_v3MinG.x > v3Corner[i].x) m_v3MinG.x = v3Corner[i].x;
+
+		if (m_v3MaxG.y < v3Corner[i].y) m_v3MaxG.y = v3Corner[i].y;
+		else if (m_v3MinG.y > v3Corner[i].y) m_v3MinG.y = v3Corner[i].y;
+
+		if (m_v3MaxG.z < v3Corner[i].z) m_v3MaxG.z = v3Corner[i].z;
+		else if (m_v3MinG.z > v3Corner[i].z) m_v3MinG.z = v3Corner[i].z;
+	}
 
 	//we calculate the distance between min and max vectors
 	m_v3ARBBSize = m_v3MaxG - m_v3MinG;
@@ -132,109 +162,84 @@ MyRigidBody::MyRigidBody(std::vector<vector3> a_pointList)
 	//Get the distance between the center and either the min or the max
 	m_fRadius = glm::distance(m_v3Center, m_v3MinL);
 }
-MyRigidBody::MyRigidBody(MyRigidBody const& other)
+MyRigidBody::MyRigidBody(MyRigidBody const& a_pOther)
 {
-	m_pMeshMngr = other.m_pMeshMngr;
+	m_pMeshMngr = a_pOther.m_pMeshMngr;
 
-	m_bVisibleBS = other.m_bVisibleBS;
-	m_bVisibleOBB = other.m_bVisibleOBB;
-	m_bVisibleARBB = other.m_bVisibleARBB;
+	m_bVisibleBS = a_pOther.m_bVisibleBS;
+	m_bVisibleOBB = a_pOther.m_bVisibleOBB;
+	m_bVisibleARBB = a_pOther.m_bVisibleARBB;
 
-	m_fRadius = other.m_fRadius;
+	m_fRadius = a_pOther.m_fRadius;
 
-	m_v3ColorColliding = other.m_v3ColorColliding;
-	m_v3ColorNotColliding = other.m_v3ColorNotColliding;
+	m_v3ColorColliding = a_pOther.m_v3ColorColliding;
+	m_v3ColorNotColliding = a_pOther.m_v3ColorNotColliding;
 
-	m_v3Center = other.m_v3Center;
-	m_v3MinL = other.m_v3MinL;
-	m_v3MaxL = other.m_v3MaxL;
+	m_v3Center = a_pOther.m_v3Center;
+	m_v3MinL = a_pOther.m_v3MinL;
+	m_v3MaxL = a_pOther.m_v3MaxL;
 
-	m_v3MinG = other.m_v3MinG;
-	m_v3MaxG = other.m_v3MaxG;
+	m_v3MinG = a_pOther.m_v3MinG;
+	m_v3MaxG = a_pOther.m_v3MaxG;
 
-	m_v3HalfWidth = other.m_v3HalfWidth;
-	m_v3ARBBSize = other.m_v3ARBBSize;
+	m_v3HalfWidth = a_pOther.m_v3HalfWidth;
+	m_v3ARBBSize = a_pOther.m_v3ARBBSize;
 
-	m_m4ToWorld = other.m_m4ToWorld;
+	m_m4ToWorld = a_pOther.m_m4ToWorld;
 
-	m_CollidingRBSet = other.m_CollidingRBSet;
+	m_CollidingRBSet = a_pOther.m_CollidingRBSet;
 }
-MyRigidBody& MyRigidBody::operator=(MyRigidBody const& other)
+MyRigidBody& MyRigidBody::operator=(MyRigidBody const& a_pOther)
 {
-	if (this != &other)
+	if (this != &a_pOther)
 	{
 		Release();
 		Init();
-		MyRigidBody temp(other);
+		MyRigidBody temp(a_pOther);
 		Swap(temp);
 	}
 	return *this;
 }
 MyRigidBody::~MyRigidBody() { Release(); };
-
-//--- other Methods
-void MyRigidBody::AddCollisionWith(MyRigidBody* other)
+//--- a_pOther Methods
+void MyRigidBody::AddCollisionWith(MyRigidBody* a_pOther)
 {
 	/*
-		check if the object is already in the colliding set, if
-		the object is already there return with no changes
+	check if the object is already in the colliding set, if
+	the object is already there return with no changes
 	*/
-	auto element = m_CollidingRBSet.find(other);
+	auto element = m_CollidingRBSet.find(a_pOther);
 	if (element != m_CollidingRBSet.end())
 		return;
 	// we couldn't find the object so add it
-	m_CollidingRBSet.insert(other);
+	m_CollidingRBSet.insert(a_pOther);
 }
-void MyRigidBody::RemoveCollisionWith(MyRigidBody* other)
+void MyRigidBody::RemoveCollisionWith(MyRigidBody* a_pOther)
 {
-	m_CollidingRBSet.erase(other);
+	m_CollidingRBSet.erase(a_pOther);
 }
 void MyRigidBody::ClearCollidingList(void)
 {
 	m_CollidingRBSet.clear();
 }
-bool MyRigidBody::IsColliding(MyRigidBody* const other)
+bool MyRigidBody::IsColliding(MyRigidBody* const a_pOther)
 {
-	//check if spheres are colliding
-	bool bColliding = true;
-	//bColliding = (glm::distance(GetCenterGlobal(), other->GetCenterGlobal()) < m_fRadius + other->m_fRadius);
-	//if they are check the Axis Aligned Bounding Box
-	if (bColliding) //they are colliding with bounding sphere
+	//check if spheres are colliding as pre-test
+	bool bColliding = (glm::distance(GetCenterGlobal(), a_pOther->GetCenterGlobal()) < m_fRadius + a_pOther->m_fRadius);
+
+	if (bColliding) //they are colliding
 	{
-		if (this->m_v3MaxG.x < other->m_v3MinG.x) //this to the right of other
-			bColliding = false;
-		if (this->m_v3MinG.x > other->m_v3MaxG.x) //this to the left of other
-			bColliding = false;
-
-		if (this->m_v3MaxG.y < other->m_v3MinG.y) //this below of other
-			bColliding = false;
-		if (this->m_v3MinG.y > other->m_v3MaxG.y) //this above of other
-			bColliding = false;
-
-		if (this->m_v3MaxG.z < other->m_v3MinG.z) //this behind of other
-			bColliding = false;
-		if (this->m_v3MinG.z > other->m_v3MaxG.z) //this in front of other
-			bColliding = false;
-
-		if (bColliding) //they are colliding with bounding box also
-		{
-			this->AddCollisionWith(other);
-			other->AddCollisionWith(this);
-		}
-		else //they are not colliding with bounding box
-		{
-			this->RemoveCollisionWith(other);
-			other->RemoveCollisionWith(this);
-		}
+		this->AddCollisionWith(a_pOther);
+		a_pOther->AddCollisionWith(this);
 	}
-	else //they are not colliding with bounding sphere
+	else //they are not colliding
 	{
-		this->RemoveCollisionWith(other);
-		other->RemoveCollisionWith(this);
+		this->RemoveCollisionWith(a_pOther);
+		a_pOther->RemoveCollisionWith(this);
 	}
+
 	return bColliding;
 }
-
 void MyRigidBody::AddToRenderList(void)
 {
 	if (m_bVisibleBS)

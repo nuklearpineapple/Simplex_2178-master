@@ -176,9 +176,19 @@ void Simplex::MyEntityManager::Update(void)
 	//check collisions
 	for (uint i = 0; i < m_uEntityCount - 1; i++)
 	{
+		//MyRigidBody* rigidbody = GetRigidBody(m_mEntityArray[i]->GetUniqueID());
+		//MyOctant* oct = octree->GetOctantContainingEntity(rigidbody);
+		
 		for (uint j = i + 1; j < m_uEntityCount; j++)
 		{
-			m_mEntityArray[i]->IsColliding(m_mEntityArray[j]);
+			/*MyRigidBody* rb = GetRigidBody(m_mEntityArray[j]->GetUniqueID());
+			if (oct != nullptr)
+			{*/
+				//if (oct->Contains(rb)) 
+				//{
+					m_mEntityArray[i]->IsColliding(m_mEntityArray[j]);
+				//}
+			//}
 		}
 	}
 }
