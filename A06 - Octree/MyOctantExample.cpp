@@ -212,7 +212,8 @@ void Simplex::MyOctant::Subdivide(void)
 			std::cout << "COUNT" << i << "---" << octant->GetEntityList().size();
 	}
 
-	m_EntityList.clear(); // VITAL
+	for(int i=0; i < m_EntityList.size(); i++)
+		m_EntityList.erase(m_EntityList.begin()); // VITAL
 
 }
 
