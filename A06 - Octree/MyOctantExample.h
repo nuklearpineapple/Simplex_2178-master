@@ -265,6 +265,7 @@ public:
 	*/
 	MyOctant* GetOctantContainingEntity(MyRigidBody* rigidbody);
 	void Update(void);
+	void UpdateTwo(void);
 	
 private:
 	/*
