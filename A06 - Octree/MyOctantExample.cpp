@@ -15,6 +15,11 @@ Simplex::MyOctant::MyOctant(vector3 a_v3center, float a_fsize)
 	m_v3Max = m_v3Center + m_fSize;
 }
 
+Simplex::MyOctant::MyOctant(MyOctant * parent)
+{
+	m_pParent = parent;
+}
+
 vector3 Simplex::MyOctant::GetMin(void)
 {
 	return m_v3Min;
@@ -143,8 +148,8 @@ void Simplex::MyOctant::Subdivide(void)
 	float newSize = m_fSize / 2.0f; // calculate new size
 	for (int i = 1; i < 9; i++)
 	{
-			MyOctant* octant = new MyOctant(); // create new octant
-			// std::cout << "NEW OCTANT LIST SIZE:::" << octant->GetEntityList().size() << ":::";
+			MyOctant* octant = new MyOctant(this); // create new octant , child
+
 			newMax = vector3(0.0f);
 			newMin = vector3(0.0f);
 			newCenter = vector3(0.0f);
@@ -211,9 +216,8 @@ void Simplex::MyOctant::Subdivide(void)
 			// TEST octant entity list count
 			std::cout << "COUNT" << i << "---" << octant->GetEntityList().size();
 	}
-
-	for(int i=0; i < m_EntityList.size(); i++)
-		m_EntityList.erase(m_EntityList.begin()); // VITAL
+	
+	ClearMyEntityList(); // clear parent entities
 
 }
 
@@ -249,35 +253,32 @@ void Simplex::MyOctant::Update(void)
 	}
 }
 
-void Simplex::MyOctant::UpdateTwo(void)
+void Simplex::MyOctant::ClearMyEntityList(void)
 {
-	//Clear all collisions
-	for (uint i = 0; i < m_EntityList.size(); i++)
-	{
-		MyEntity* entity = m_pEntityMngr->GetEntity(m_EntityList[i]);
-		entity->ClearCollisionList();
+	uint listSize = m_EntityList.size();
+	for (int i = 0; i < listSize; i++) {
+		m_EntityList.erase(m_EntityList.begin());
 	}
+}
 
-	for (uint i = 0; i < m_EntityList.size(); i++)
-	{
-		MyEntity* entity = m_pEntityMngr->GetEntity(m_EntityList[i]);
-		MyRigidBody* rb = entity->GetRigidBody();
+void Simplex::MyOctant::Consolidate(void)
+{
+	if (m_EntityList.empty()) {
+		// Entity list is empty, I have child octants
+		for (MyOctant* child : m_lChild) 
+			child->Consolidate();
 
-		MyOctant* oct = GetOctantContainingEntity(rb);
-		if (oct != nullptr)
-		{
-			for (uint j = i + 1; j < m_EntityList.size(); j++)
-			{
-				MyEntity* otherEntity = m_pEntityMngr->GetEntity(m_EntityList[j]);
-				MyRigidBody* otherRB = otherEntity->GetRigidBody();
-
-				if (oct->HasPoint(otherRB->GetCenterGlobal()))
-				{
-					rb->IsColliding(otherRB);
-					//std::cout << "collision?";
-				}
-			}
+		if (!m_EntityList.empty()) {
+			for (int i = 0; i < m_lChild.size(); i++)
+				m_lChild.erase(m_lChild.begin());
 		}
+	} 
+	else {
+		// entity list not empty, I am a leaf node
+		for (uint id : m_EntityList) 
+			m_pParent->AddEntityID(id);
+
+		ClearMyEntityList();
 	}
 }
 

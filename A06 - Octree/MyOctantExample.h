@@ -62,6 +62,14 @@ public:
 	*/
 	MyOctant(vector3 a_v3Center, float a_fSize);
 	/*
+	USAGE: Constructor
+	ARGUMENTS:
+	- vector3 a_v3Center -> Center of the octant in global space
+	- float a_fSize -> size of each side of the octant volume
+	OUTPUT: class object
+	*/
+	MyOctant(MyOctant* parent);
+	/*
 	USAGE: Copy Constructor
 	ARGUMENTS: class object to copy
 	OUTPUT: class object instance
@@ -265,7 +273,11 @@ public:
 	*/
 	MyOctant* GetOctantContainingEntity(MyRigidBody* rigidbody);
 	void Update(void);
-	void UpdateTwo(void);
+	void ClearMyEntityList(void);
+	/*
+	revert to previous parent octant by eliminating children
+	*/
+	void Consolidate(void);
 	
 private:
 	/*

@@ -157,6 +157,8 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 			else
 				changeCube = false;
 
+			m_pOctant->Consolidate();
+
 			/*
 			SafeDelete(m_pOctant);
 			m_pOctant = new MyOctant(m_uOctantLevels, 5);
@@ -197,6 +199,8 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 				changeCube = true;
 			else
 				changeCube = false;
+
+			m_pOctant->Consolidate();
 
 			/*
 			SafeDelete(m_pOctant);
