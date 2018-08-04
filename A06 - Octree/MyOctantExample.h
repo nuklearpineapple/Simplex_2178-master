@@ -70,6 +70,14 @@ public:
 	*/
 	MyOctant(MyOctant* parent);
 	/*
+	USAGE: Constructor
+	ARGUMENTS:
+	- vector3 a_v3Center -> Center of the octant in global space
+	- float a_fSize -> size of each side of the octant volume
+	OUTPUT: class object
+	*/
+	MyOctant(MyOctant* parent, uint parentLevel);
+	/*
 	USAGE: Copy Constructor
 	ARGUMENTS: class object to copy
 	OUTPUT: class object instance
@@ -190,6 +198,12 @@ public:
 	*/
 	void Subdivide(void);
 	/*
+	USAGE: allocates 8 smaller octants in the child pointers
+	ARGUMENTS: ---
+	OUTPUT: ---
+	*/
+	void SubdivideThisOctant(void);
+	/*
 	USAGE: returns the child specified in the index
 	ARGUMENTS: uint a_nChild -> index of the child (from 0 to 7)
 	OUTPUT: MyOctant object (child in index)
@@ -274,6 +288,7 @@ public:
 	MyOctant* GetOctantContainingEntity(MyRigidBody* rigidbody);
 	void Update(void);
 	void ClearMyEntityList(void);
+	void ClearMyChildList(void);
 	/*
 	revert to previous parent octant by eliminating children
 	*/

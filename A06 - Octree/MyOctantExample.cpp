@@ -20,6 +20,12 @@ Simplex::MyOctant::MyOctant(MyOctant * parent)
 	m_pParent = parent;
 }
 
+Simplex::MyOctant::MyOctant(MyOctant * parent, uint parentLevel)
+{
+	m_pParent = parent;
+	m_uLevel = parentLevel + 1;
+}
+
 vector3 Simplex::MyOctant::GetMin(void)
 {
 	return m_v3Min;
@@ -142,13 +148,27 @@ void Simplex::MyOctant::SetEntityMngr(MyEntityManager * entityMngr)
 
 void Simplex::MyOctant::Subdivide(void)
 {
+
+	if (m_EntityList.empty()) {
+
+		for (MyOctant* child : m_lChild) {
+			child->Subdivide();
+		}
+	}
+	else {
+		SubdivideThisOctant();
+	}
+}
+
+void Simplex::MyOctant::SubdivideThisOctant(void)
+{
 	vector3 newMax = ZERO_V3; // store new max positions 
 	vector3 newMin = ZERO_V3; // store new min positions 
 	vector3 newCenter = ZERO_V3; // store new center positions
 	float newSize = m_fSize / 2.0f; // calculate new size
 	for (int i = 1; i < 9; i++)
 	{
-			MyOctant* octant = new MyOctant(this); // create new octant , child
+			MyOctant* octant = new MyOctant(this, m_uLevel); // create new octant , child
 
 			newMax = vector3(0.0f);
 			newMin = vector3(0.0f);
@@ -199,6 +219,7 @@ void Simplex::MyOctant::Subdivide(void)
 			octant->SetCenterGlobal(newCenter); // set new center for octant
 			octant->SetMin(newMin); // set the new min position for the octant
 			octant->SetMax(newMax); // set the new max position for the octant
+			octant->SetEntityMngr(m_pEntityMngr);
 
 			m_lChild.push_back(octant);
 
@@ -214,7 +235,7 @@ void Simplex::MyOctant::Subdivide(void)
 			}
 			
 			// TEST octant entity list count
-			std::cout << "COUNT" << i << "---" << octant->GetEntityList().size();
+			//std::cout << "COUNT" << i << "---" << octant->GetEntityList().size();
 	}
 	
 	ClearMyEntityList(); // clear parent entities
@@ -261,17 +282,24 @@ void Simplex::MyOctant::ClearMyEntityList(void)
 	}
 }
 
+void Simplex::MyOctant::ClearMyChildList(void)
+{
+	uint listSize = m_lChild.size();
+	for (int i = 0; i < listSize; i++) {
+		m_lChild.erase(m_lChild.begin());
+	}
+}
+
 void Simplex::MyOctant::Consolidate(void)
 {
+
 	if (m_EntityList.empty()) {
 		// Entity list is empty, I have child octants
 		for (MyOctant* child : m_lChild) 
 			child->Consolidate();
 
-		if (!m_EntityList.empty()) {
-			for (int i = 0; i < m_lChild.size(); i++)
-				m_lChild.erase(m_lChild.begin());
-		}
+		ClearMyChildList();
+		
 	} 
 	else {
 		// entity list not empty, I am a leaf node
@@ -279,6 +307,7 @@ void Simplex::MyOctant::Consolidate(void)
 			m_pParent->AddEntityID(id);
 
 		ClearMyEntityList();
+		
 	}
 }
 
