@@ -244,30 +244,38 @@ void Simplex::MyOctant::SubdivideThisOctant(void)
 
 void Simplex::MyOctant::Update(void)
 {
-	//Clear all collisions
-	for (uint i = 0; i < m_EntityList.size(); i++)
-	{
-		MyEntity* entity = m_pEntityMngr->GetEntity(m_EntityList[i]);
-		entity->ClearCollisionList();
+	if (m_EntityList.size() == 0) {
+		// i have children
+		for (MyOctant* child : m_lChild) {
+			child->Update();
+		}
 	}
-
-	for (uint i=0; i < m_EntityList.size(); i++)
-	{
-		MyEntity* entity = m_pEntityMngr->GetEntity(m_EntityList[i]);
-		MyRigidBody* rb = entity->GetRigidBody();
-
-		MyOctant* oct = GetOctantContainingEntity(rb);
-		if (oct != nullptr) 
+	else {
+		//Clear all collisions
+		for (uint i = 0; i < m_EntityList.size(); i++)
 		{
-			for (uint j = i + 1; j < m_EntityList.size(); j++)
-			{ 
-				MyEntity* otherEntity = m_pEntityMngr->GetEntity(m_EntityList[j]);
-				MyRigidBody* otherRB = otherEntity->GetRigidBody();
+			MyEntity* entity = m_pEntityMngr->GetEntity(m_EntityList[i]);
+			entity->ClearCollisionList();
+		}
 
-				if (oct->HasPoint(otherRB->GetCenterGlobal())) 
+		for (uint i = 0; i < m_EntityList.size(); i++)
+		{
+			MyEntity* entity = m_pEntityMngr->GetEntity(m_EntityList[i]);
+			MyRigidBody* rb = entity->GetRigidBody();
+
+			MyOctant* oct = GetOctantContainingEntity(rb);
+			if (oct != nullptr)
+			{
+				for (uint j = i + 1; j < m_EntityList.size(); j++)
 				{
-					rb->IsColliding(otherRB);
-					//std::cout << "collision?";
+					MyEntity* otherEntity = m_pEntityMngr->GetEntity(m_EntityList[j]);
+					MyRigidBody* otherRB = otherEntity->GetRigidBody();
+
+					if (oct->HasPoint(otherRB->GetCenterGlobal()))
+					{
+						rb->IsColliding(otherRB);
+						//std::cout << "collision?";
+					}
 				}
 			}
 		}
