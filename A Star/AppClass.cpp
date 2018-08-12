@@ -97,11 +97,30 @@ void Application::Display(void)
 	m_pMeshMngr->Print("\nTimer: ");//Add a line on top
 	m_pMeshMngr->PrintLine(std::to_string(fTimer), C_YELLOW);
 
-	// Draw stops, "make all stops"
 	for (uint i = 0; i < m_allStops.size(); ++i)
 	{
+		// draw stops
 		m_pMeshMngr->AddSphereToRenderList(glm::translate(m_allStops[i]) * glm::scale(vector3(0.2f)), C_RED, RENDER_SOLID);
-		//m_pMeshMngr->AddLineToRenderList(matrix4 a_m4ToWorld, vector3 a_v3Start, vector3 a_v3End, vector3 a_v3ColorStart, vector3 a_v3ColorEnd);
+
+		// find coord to draw lines
+		vector3 sPath = pathfinder->FindNode("s")->GetCoordinates();
+		vector3 aPath = pathfinder->FindNode("a")->GetCoordinates();
+		vector3 bPath = pathfinder->FindNode("b")->GetCoordinates();
+		vector3 cPath = pathfinder->FindNode("c")->GetCoordinates();
+		vector3 dPath = pathfinder->FindNode("d")->GetCoordinates();
+		vector3 gPath = pathfinder->FindNode("g")->GetCoordinates();
+		vector3 fPath = pathfinder->FindNode("f")->GetCoordinates();
+
+		// draw lines
+		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), sPath, aPath, C_RED, C_RED); // s to a
+		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), sPath, bPath, C_RED, C_RED); // s to b
+		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), aPath, cPath, C_RED, C_RED); // a to c
+		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), aPath, gPath, C_RED, C_RED); // a to g
+		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), gPath, bPath, C_RED, C_RED); // g to b
+		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), gPath, cPath, C_RED, C_RED); // g to c
+		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), bPath, dPath, C_RED, C_RED); // b to d 
+		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), cPath, fPath, C_RED, C_RED); // c to f
+		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), dPath, fPath, C_RED, C_RED); // d to f
 	}
 	
 	// draw a skybox
