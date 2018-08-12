@@ -37,6 +37,15 @@ void Application::DrawGUI(void)
 			ImGui::Text("	 F2: Orthographic X\n");
 			ImGui::Text("	 F3: Orthographic Y\n");
 			ImGui::Text("	 F4: Orthographic Z\n");
+			ImGui::Text("\n------------------------");
+			ImGui::Text("- A* Algorithm -");
+			ImGui::Text("In this demonstration the character must reach \n"); 
+			ImGui::Text("a final point using the shortest path.\n");
+			ImGui::Text("Each path is given a unique weight to signify \n");
+			ImGui::Text("which paths theoretically take longer to travel on.");
+			ImGui::Text("After reaching the destination (Green dot), the character \n");
+			ImGui::Text("returns to the starting node (Blue dot) and repeats \n");
+			ImGui::Text("the shortest path.");
 		}
 		ImGui::End();
 	}

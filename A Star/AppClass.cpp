@@ -92,10 +92,16 @@ void Application::Display(void)
 	
 	
 	matrix4 m4Model = glm::translate(v3CurrentPos);
-	m_pModel->SetModelMatrix(m4Model);
+	m_pModel->SetModelMatrix(m4Model * glm::scale(vector3(0.7f))); // decrease size of character so its easier to see pathfinding
 
 	m_pMeshMngr->Print("\nTimer: ");//Add a line on top
 	m_pMeshMngr->PrintLine(std::to_string(fTimer), C_YELLOW);
+
+	// draw start point
+	m_pMeshMngr->AddSphereToRenderList(glm::translate(m_allStops[0]) * glm::scale(vector3(0.3f)), C_BLUE, RENDER_SOLID);
+
+	// draw end point
+	m_pMeshMngr->AddSphereToRenderList(glm::translate(m_allStops[6]) * glm::scale(vector3(0.3f)), C_GREEN, RENDER_SOLID);
 
 	for (uint i = 0; i < m_allStops.size(); ++i)
 	{
@@ -112,14 +118,14 @@ void Application::Display(void)
 		vector3 fPath = pathfinder->FindNode("f")->GetCoordinates();
 
 		// draw lines
-		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), sPath, aPath, C_RED, C_RED); // s to a
+		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), sPath, aPath, C_GREEN, C_GREEN); // s to a
 		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), sPath, bPath, C_RED, C_RED); // s to b
-		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), aPath, cPath, C_RED, C_RED); // a to c
+		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), aPath, cPath, C_GREEN, C_GREEN); // a to c
 		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), aPath, gPath, C_RED, C_RED); // a to g
 		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), gPath, bPath, C_RED, C_RED); // g to b
 		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), gPath, cPath, C_RED, C_RED); // g to c
 		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), bPath, dPath, C_RED, C_RED); // b to d 
-		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), cPath, fPath, C_RED, C_RED); // c to f
+		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), cPath, fPath, C_GREEN, C_GREEN); // c to f
 		m_pMeshMngr->AddLineToRenderList(glm::translate(ZERO_V3), dPath, fPath, C_RED, C_RED); // d to f
 	}
 	
