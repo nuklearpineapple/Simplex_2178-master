@@ -2,30 +2,29 @@
 void Application::InitVariables(void)
 {
 	//Change this to your name and email
-	m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu";
+	m_sProgrammer = "Tim Ascencio - ta3755 @rit.edu";
 
 	//Set the position and target of the camera
-	m_pCameraMngr->SetPositionTargetAndUp(vector3(5.0f,3.0f,15.0f), ZERO_V3, AXIS_Y);
+	m_pCameraMngr->SetPositionTargetAndUp(vector3(2.0f, 2.0f, 15.0f), vector3(2.0f, 2.0f, 0.0f), AXIS_Y);
 
 	m_pModel = new Simplex::Model();
 	m_pModel->Load("Sorted\\WallEye.bto");
-	
-	m_stopsList.push_back(vector3(-4.0f, -2.0f, 0.0f));
-	m_stopsList.push_back(vector3(0.0f, -2.0f, 0.0f));
 
-	m_stopsList.push_back(vector3(-4.0f, -1.0f, 0.0f));
-	m_stopsList.push_back(vector3(0.0f, -1.0f, 0.0f));
+	// initialize and run pathfinder, create path to travel on
+	pathfinder->Run();
 
-	m_stopsList.push_back(vector3(-4.0f, 0.0f, 0.0f));
-	m_stopsList.push_back(vector3(0.0f, 0.0f, 0.0f));
+	// add initial all stops based on all nodes
+	for (uint i = 0; i < pathfinder->initialNodes.size(); i++) {
+		vector3 nodeCoordinates = pathfinder->initialNodes[i]->GetCoordinates();
+		m_allStops.push_back(nodeCoordinates);
+		
+	}
 
-	m_stopsList.push_back(vector3(-4.0f, 1.0f, 0.0f));
-	m_stopsList.push_back(vector3(0.0f, 1.0f, 0.0f));
+	for (uint i = 0; i < pathfinder->finalPath.size(); i++) {
+		vector3 finalStops = pathfinder->finalPath[i]->GetCoordinates();
+		m_stopsList.push_back(finalStops);
+	}
 
-	m_stopsList.push_back(vector3(-4.0f, 2.0f, 0.0f));
-	m_stopsList.push_back(vector3(0.0f, 2.0f, 0.0f));
-
-	m_stopsList.push_back(vector3(1.0f, 3.0f, 0.0f));
 }
 void Application::Update(void)
 {
@@ -98,10 +97,11 @@ void Application::Display(void)
 	m_pMeshMngr->Print("\nTimer: ");//Add a line on top
 	m_pMeshMngr->PrintLine(std::to_string(fTimer), C_YELLOW);
 
-	// Draw stops
-	for (uint i = 0; i < m_stopsList.size(); ++i)
+	// Draw stops, "make all stops"
+	for (uint i = 0; i < m_allStops.size(); ++i)
 	{
-		m_pMeshMngr->AddSphereToRenderList(glm::translate(m_stopsList[i]) * glm::scale(vector3(0.2f)), C_RED, RENDER_SOLID);
+		m_pMeshMngr->AddSphereToRenderList(glm::translate(m_allStops[i]) * glm::scale(vector3(0.2f)), C_RED, RENDER_SOLID);
+		//m_pMeshMngr->AddLineToRenderList(matrix4 a_m4ToWorld, vector3 a_v3Start, vector3 a_v3End, vector3 a_v3ColorStart, vector3 a_v3ColorEnd);
 	}
 	
 	// draw a skybox

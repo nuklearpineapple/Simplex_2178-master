@@ -6,15 +6,20 @@ Date: 2017/05
 #define __APPLICATIONCLASS_H_
 
 #include "Definitions.h"
+#include "Pathfinder.h"
 
 #include "ControllerConfiguration.h"
 #include "imgui\ImGuiObject.h"
 
 class Application
 {
-	String m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu";
+	String m_sProgrammer = "Tim Ascencio - ta3755@rit.edu";
+	std::vector<vector3> m_allStops;
 	std::vector<vector3> m_stopsList;
 	Simplex::Model* m_pModel = nullptr;
+
+	Pathfinder* pathfinder = new Pathfinder();
+
 private:
 	static ImGuiObject gui; //GUI object
 	

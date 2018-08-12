@@ -9,11 +9,12 @@ namespace Simplex
 	{
 	public:
 
-		uint cost; // size of the connection
-		// from node 1
-		// to node 2
+		uint myCost; // size of the connection
+		String nodeOne; // from node 
+		String nodeTwo; // to node
 
 		Connection();
+		Connection(String aNode, String bNode, uint cost);
 		~Connection();
 	};
 
